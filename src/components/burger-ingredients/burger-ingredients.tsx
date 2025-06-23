@@ -29,10 +29,6 @@ export const BurgerIngredients: FC = () => {
 
   // Загружаем ингредиенты при монтировании
   useEffect(() => {
-    dispatch(fetchIngredients());
-  }, [dispatch]);
-
-  useEffect(() => {
     if (inViewBuns) {
       setCurrentTab('bun');
     } else if (inViewSauces) {

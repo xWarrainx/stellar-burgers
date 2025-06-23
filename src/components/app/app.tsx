@@ -32,7 +32,7 @@ export const ProtectedRoute = ({
   element: React.ReactElement;
   isPublic?: boolean;
 }) => {
-  const isAuthenticated = false; // Будет логика проверки авторизации
+  const isAuthenticated = false; // Здесь будет логика проверки авторизации
   if (isAuthenticated || isPublic) {
     return element;
   } else {
@@ -50,6 +50,10 @@ export const App = () => {
     dispatch(fetchIngredients());
   }, [dispatch]);
 
+  const handleModalClose = () => {
+    navigate(-1);
+  };
+
   return (
     <div className={styles.app}>
       <AppHeader />
@@ -62,7 +66,6 @@ export const App = () => {
           path='/login'
           element={<ProtectedRoute element={<Login />} isPublic />}
         />
-
         <Route
           path='/register'
           element={<ProtectedRoute element={<Register />} isPublic />}
@@ -78,15 +81,15 @@ export const App = () => {
 
         <Route
           path='/profile'
-          element={<ProtectedRoute element={<Profile />} isPublic />}
+          element={<ProtectedRoute element={<Profile />} />}
         />
         <Route
           path='/profile/orders'
-          element={<ProtectedRoute element={<ProfileOrders />} isPublic />}
+          element={<ProtectedRoute element={<ProfileOrders />} />}
         />
         <Route
           path='/profile/orders/:number'
-          element={<ProtectedRoute element={<OrderInfo />} isPublic />}
+          element={<ProtectedRoute element={<OrderInfo />} />}
         />
 
         <Route path='/ingredients/:id' element={<IngredientDetails />} />
@@ -98,7 +101,7 @@ export const App = () => {
           <Route
             path='/feed/:number'
             element={
-              <Modal title='Детали заказа' onClose={() => navigate(-1)}>
+              <Modal title='Детали заказа' onClose={handleModalClose}>
                 <OrderInfo />
               </Modal>
             }
@@ -106,7 +109,7 @@ export const App = () => {
           <Route
             path='/ingredients/:id'
             element={
-              <Modal title='Детали ингредиента' onClose={() => navigate(-1)}>
+              <Modal title='Детали ингредиента' onClose={handleModalClose}>
                 <IngredientDetails />
               </Modal>
             }
@@ -116,7 +119,7 @@ export const App = () => {
             element={
               <ProtectedRoute
                 element={
-                  <Modal title='Детали заказа' onClose={() => navigate(-1)}>
+                  <Modal title='Детали заказа' onClose={handleModalClose}>
                     <OrderInfo />
                   </Modal>
                 }
@@ -128,5 +131,4 @@ export const App = () => {
     </div>
   );
 };
-
 export default App;
