@@ -20,9 +20,12 @@ import {
 } from 'react-router-dom';
 import { OrderInfo, IngredientDetails, Modal } from '@components';
 import { AppHeader } from '@components';
-import { useEffect } from 'react';
-import { useDispatch } from '../../services/store';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector, RootState } from '../../services/store';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
+import { checkUserAuth } from '../../services/slices/userSlice';
+import { getCookie } from '../../utils/cookie';
+import { Preloader } from '@ui';
 
 // Компонент для защищенных маршрутов
 export const ProtectedRoute = ({
@@ -32,12 +35,33 @@ export const ProtectedRoute = ({
   element: React.ReactElement;
   isPublic?: boolean;
 }) => {
-  const isAuthenticated = false; // Здесь будет логика проверки авторизации
-  if (isAuthenticated || isPublic) {
+  const dispatch = useDispatch();
+  const { user, isAuthChecked, loading } = useSelector(
+    (state: RootState) => state.user
+  );
+
+  // Проверяем авторизацию при монтировании
+  useEffect(() => {
+    const accessToken = getCookie('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (accessToken && refreshToken && !user && !isAuthChecked) {
+      dispatch(checkUserAuth());
+    }
+  }, [dispatch, user, isAuthChecked]);
+
+  // Пока проверяем авторизацию
+  //if ((!isAuthChecked || loading) && !isPublic) {
+  //return <Preloader />;
+  //}
+
+  // Публичный маршрут или авторизованный пользователь
+  if (isPublic || user) {
     return element;
-  } else {
-    return <Navigate to='/login' replace />;
   }
+
+  // Перенаправляем на логин если не авторизованы
+  return <Navigate to='/login' replace />;
 };
 
 export const App = () => {
