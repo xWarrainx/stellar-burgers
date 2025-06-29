@@ -1,9 +1,12 @@
 import { ProfileUI } from '@ui-pages';
 import { FC, SyntheticEvent, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from '../../services/store';
 import { getUser } from '@selectors';
-import { useSelector } from '../../services/store';
+import { updateUser } from '../../services/slices/userSlice';
+import { TRegisterData } from '@api';
 
 export const Profile: FC = () => {
+  const dispatch = useDispatch();
   const user = useSelector(getUser);
 
   const [formValue, setFormValue] = useState({
@@ -12,23 +15,44 @@ export const Profile: FC = () => {
     password: ''
   });
 
+  // Обновляем форму, если данные пользователя изменились (например, после загрузки)
   useEffect(() => {
-    setFormValue((prevState) => ({
-      ...prevState,
+    setFormValue({
       name: user?.name || '',
-      email: user?.email || ''
-    }));
+      email: user?.email || '',
+      password: ''
+    });
   }, [user]);
 
+  // Проверяем, были ли изменения в форме
   const isFormChanged =
     formValue.name !== user?.name ||
     formValue.email !== user?.email ||
     !!formValue.password;
 
+  // Отправка формы
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    if (!isFormChanged) return;
+
+    // Формируем данные для отправки (исключаем пустой пароль)
+    const updatedData: Partial<TRegisterData> = {
+      name: formValue.name,
+      email: formValue.email,
+      ...(formValue.password ? { password: formValue.password } : {})
+    };
+
+    dispatch(updateUser(updatedData))
+      .unwrap()
+      .then(() => {
+        setFormValue((prev) => ({ ...prev, password: '' }));
+      })
+      .catch((err) => {
+        console.error('Ошибка обновления:', err);
+      });
   };
 
+  // Сброс формы к исходным данным
   const handleCancel = (e: SyntheticEvent) => {
     e.preventDefault();
     setFormValue({
@@ -38,6 +62,7 @@ export const Profile: FC = () => {
     });
   };
 
+  // Обработчик изменений в инпутах
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormValue((prevState) => ({
       ...prevState,
@@ -54,6 +79,4 @@ export const Profile: FC = () => {
       handleInputChange={handleInputChange}
     />
   );
-
-  return null;
 };

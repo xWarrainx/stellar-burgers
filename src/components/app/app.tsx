@@ -20,11 +20,10 @@ import {
 } from 'react-router-dom';
 import { OrderInfo, IngredientDetails, Modal } from '@components';
 import { AppHeader } from '@components';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector, RootState } from '../../services/store';
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from '../../services/store';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
 import { checkUserAuth } from '../../services/slices/userSlice';
-import { getCookie } from '../../utils/cookie';
 import { Preloader } from '@ui';
 
 // Компонент для защищенных маршрутов
@@ -36,32 +35,30 @@ export const ProtectedRoute = ({
   isPublic?: boolean;
 }) => {
   const dispatch = useDispatch();
-  const { user, isAuthChecked, loading } = useSelector(
-    (state: RootState) => state.user
-  );
+  const { user, isAuthChecked } = useSelector((state) => state.user);
+  const location = useLocation();
 
-  // Проверяем авторизацию при монтировании
   useEffect(() => {
-    const accessToken = getCookie('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
-
-    if (accessToken && refreshToken && !user && !isAuthChecked) {
+    if (!isAuthChecked) {
       dispatch(checkUserAuth());
     }
-  }, [dispatch, user, isAuthChecked]);
+  }, [dispatch, isAuthChecked]);
 
-  // Пока проверяем авторизацию
-  //if ((!isAuthChecked || loading) && !isPublic) {
-  //return <Preloader />;
-  //}
-
-  // Публичный маршрут или авторизованный пользователь
-  if (isPublic || user) {
-    return element;
+  if (!isAuthChecked) {
+    return <Preloader />;
   }
 
-  // Перенаправляем на логин если не авторизованы
-  return <Navigate to='/login' replace />;
+  // Если маршрут публичный и пользователь авторизован - перенаправляем в профиль
+  if (isPublic && user) {
+    return <Navigate to='/profile' replace />;
+  }
+
+  // Если маршрут защищенный и пользователь не авторизован - перенаправляем на логин
+  if (!isPublic && !user) {
+    return <Navigate to='/login' state={{ from: location }} replace />;
+  }
+
+  return element;
 };
 
 export const App = () => {
@@ -155,4 +152,5 @@ export const App = () => {
     </div>
   );
 };
+
 export default App;

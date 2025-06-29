@@ -8,15 +8,31 @@ import { BurgerIngredientsUI } from '../ui/burger-ingredients';
 export const BurgerIngredients: FC = () => {
   const dispatch = useDispatch();
   const { items: ingredients } = useSelector((state) => state.ingredients);
+  const { bun, ingredients: constructorIngredients } = useSelector(
+    (state) => state.constructorItems
+  );
 
-  // Фильтруем ингредиенты по категориям
-  const buns: TIngredient[] = ingredients.filter((item) => item.type === 'bun');
-  const mains: TIngredient[] = ingredients.filter(
-    (item) => item.type === 'main'
-  );
-  const sauces: TIngredient[] = ingredients.filter(
-    (item) => item.type === 'sauce'
-  );
+  // Функция для подсчета количества ингредиентов
+  const getIngredientCount = (ingredient: TIngredient) => {
+    if (ingredient.type === 'bun') {
+      return bun?._id === ingredient._id ? 2 : 0;
+    }
+    return constructorIngredients.filter((item) => item._id === ingredient._id)
+      .length;
+  };
+
+  // Фильтруем ингредиенты по категориям с добавлением count
+  const buns = ingredients
+    .filter((item) => item.type === 'bun')
+    .map((item) => ({ ...item, count: getIngredientCount(item) }));
+
+  const mains = ingredients
+    .filter((item) => item.type === 'main')
+    .map((item) => ({ ...item, count: getIngredientCount(item) }));
+
+  const sauces = ingredients
+    .filter((item) => item.type === 'sauce')
+    .map((item) => ({ ...item, count: getIngredientCount(item) }));
 
   const [currentTab, setCurrentTab] = useState<TTabMode>('bun');
   const titleBunRef = useRef<HTMLHeadingElement>(null);
@@ -27,7 +43,6 @@ export const BurgerIngredients: FC = () => {
   const [mainsRef, inViewFilling] = useInView({ threshold: 0 });
   const [saucesRef, inViewSauces] = useInView({ threshold: 0 });
 
-  // Загружаем ингредиенты при монтировании
   useEffect(() => {
     if (inViewBuns) {
       setCurrentTab('bun');

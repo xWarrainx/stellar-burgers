@@ -85,10 +85,34 @@ export const logoutUser = createAsyncThunk(
   }
 );
 
+export const updateUser = createAsyncThunk(
+  'user/updateUser',
+  async (userData: Partial<TRegisterData>, { rejectWithValue }) => {
+    try {
+      const data = await updateUserApi(userData);
+
+      if (!data?.success) {
+        return rejectWithValue(data);
+      }
+
+      return data.user;
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
 const userSlice = createSlice({
   name: 'user',
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.user = null;
+      state.isAuthChecked = true;
+      state.loading = false;
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loginUser.pending, (state) => {
@@ -103,12 +127,18 @@ const userSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(checkUserAuth.pending, (state) => {
+        state.loading = true;
+      })
       .addCase(checkUserAuth.fulfilled, (state, action) => {
         state.user = action.payload;
         state.isAuthChecked = true;
+        state.loading = false;
       })
       .addCase(checkUserAuth.rejected, (state) => {
+        state.user = null;
         state.isAuthChecked = true;
+        state.loading = false;
       })
       .addCase(logoutUser.pending, (state) => {
         state.loading = true;
@@ -120,9 +150,22 @@ const userSlice = createSlice({
       .addCase(logoutUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(updateUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(updateUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.loading = false;
+      })
+      .addCase(updateUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   }
 });
 
+export const { logout } = userSlice.actions;
 export default userSlice.reducer;
 export type { UserState };
