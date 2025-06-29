@@ -4,7 +4,6 @@ import { Preloader } from '../ui/preloader';
 import { IngredientDetailsUI } from '../ui/ingredient-details';
 
 export const IngredientDetails: FC = () => {
-  // Получаем текущий ингредиент из хранилища
   const ingredientData = useSelector(
     (state) => state.ingredients.currentIngredient
   );

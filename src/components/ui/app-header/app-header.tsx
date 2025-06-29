@@ -10,7 +10,6 @@ import {
 import { NavLink, useMatch } from 'react-router-dom';
 
 export const AppHeaderUI: FC<TAppHeaderUIProps> = ({ userName }) => {
-  // Дополнительная проверка для профиля
   const isProfileActive = useMatch('/profile/*');
 
   return (

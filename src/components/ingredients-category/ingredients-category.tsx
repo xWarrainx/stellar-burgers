@@ -22,11 +22,11 @@ export const IngredientsCategory = forwardRef<
 
     // Учитываем булку
     if (bun) {
-      counters[bun._id] = 2; // Булки всегда учитываются дважды
+      counters[bun._id] = 2;
     }
 
     return counters;
-  }, [bun, constructorIngredients]); // Зависимости для пересчета
+  }, [bun, constructorIngredients]);
 
   return (
     <IngredientsCategoryUI

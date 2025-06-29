@@ -11,7 +11,6 @@ const getOrders = (orders: TOrder[], status: string): number[] =>
     .slice(0, 20);
 
 export const FeedInfo: FC = () => {
-  // Получаем данные из store
   const orders = useSelector(selectOrders);
   const { total, totalToday } = useSelector(selectFeedStats);
 

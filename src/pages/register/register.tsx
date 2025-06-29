@@ -31,7 +31,7 @@ export const Register: FC = () => {
 
   return (
     <RegisterUI
-      errorText=''
+      errorText={errorText}
       email={email}
       userName={userName}
       password={password}

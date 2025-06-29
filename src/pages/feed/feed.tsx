@@ -9,15 +9,19 @@ export const Feed: FC = () => {
   const dispatch = useDispatch();
   const orders = useSelector(getFeedOrders);
 
+  // Загрузка данных при монтировании
   useEffect(() => {
     dispatch(fetchFeeds());
   }, [dispatch]);
+
+  // Функция для обновления данных
+  const handleGetFeeds = () => {
+    dispatch(fetchFeeds());
+  };
 
   if (!orders.length) {
     return <Preloader />;
   }
 
-  return (
-    <FeedUI orders={orders} handleGetFeeds={() => dispatch(fetchFeeds())} />
-  );
+  return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };
