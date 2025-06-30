@@ -11,55 +11,13 @@ import {
 } from '../../pages';
 import '../../index.css';
 import styles from './app.module.css';
-import {
-  Routes,
-  Route,
-  Navigate,
-  useNavigate,
-  useLocation
-} from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { OrderInfo, IngredientDetails, Modal } from '@components';
 import { AppHeader } from '@components';
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from '../../services/store';
+import { useDispatch } from '../../services/store';
 import { fetchIngredients } from '../../services/slices/ingredientsSlice';
-import { checkUserAuth } from '../../services/slices/userSlice';
-import { Preloader } from '@ui';
-
-// Компонент для защищенных маршрутов
-export const ProtectedRoute = ({
-  element,
-  isPublic = false
-}: {
-  element: React.ReactElement;
-  isPublic?: boolean;
-}) => {
-  const dispatch = useDispatch();
-  const { user, isAuthChecked } = useSelector((state) => state.user);
-  const location = useLocation();
-
-  useEffect(() => {
-    if (!isAuthChecked) {
-      dispatch(checkUserAuth());
-    }
-  }, [dispatch, isAuthChecked]);
-
-  if (!isAuthChecked) {
-    return <Preloader />;
-  }
-
-  // Если маршрут публичный и пользователь авторизован - перенаправляем в профиль
-  if (isPublic && user) {
-    return <Navigate to='/profile' replace />;
-  }
-
-  // Если маршрут защищенный и пользователь не авторизован - перенаправляем на логин
-  if (!isPublic && !user) {
-    return <Navigate to='/login' state={{ from: location }} replace />;
-  }
-
-  return element;
-};
+import { ProtectedRoute } from '../protected-route/protected-route';
 
 export const App = () => {
   const dispatch = useDispatch();
