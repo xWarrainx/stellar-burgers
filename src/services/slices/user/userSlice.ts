@@ -11,7 +11,7 @@ import {
   resetPasswordApi
 } from '@api';
 import { TUser } from '@utils-types';
-import { setCookie, getCookie, deleteCookie } from '../../utils/cookie';
+import { setCookie, getCookie, deleteCookie } from '../../../utils/cookie';
 
 interface UserState {
   user: TUser | null;
