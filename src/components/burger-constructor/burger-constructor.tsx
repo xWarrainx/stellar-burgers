@@ -1,11 +1,14 @@
 import { FC } from 'react';
 import { useSelector, useDispatch } from '../../services/store';
 import { BurgerConstructorUI } from '@ui';
-import { createOrder, clearOrder } from '../../services/slices/orderSlice';
-import { clearConstructor } from '../../services/slices/constructorSlice';
+import {
+  createOrder,
+  clearOrder
+} from '../../services/slices/order/orderSlice';
+import { clearConstructor } from '../../services/slices/constructor/constructorSlice';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TIngredient } from '@utils-types';
-import { checkUserAuth } from '../../services/slices/userSlice';
+import { checkUserAuth } from '../../services/slices/user/userSlice';
 
 export const BurgerConstructor: FC = () => {
   const dispatch = useDispatch();

@@ -1,9 +1,9 @@
 import { combineReducers } from 'redux';
-import ingredientsReducer from './slices/ingredientsSlice';
-import constructorReducer from './slices/constructorSlice';
-import orderReducer from './slices/orderSlice';
-import userReducer from './slices/userSlice';
-import feedReducer from './slices/feedSlice';
+import ingredientsReducer from './slices/ingredients/ingredientsSlice';
+import constructorReducer from './slices/constructor/constructorSlice';
+import orderReducer from './slices/order/orderSlice';
+import userReducer from './slices/user/userSlice';
+import feedReducer from './slices/feed/feedSlice';
 
 export const rootReducer = combineReducers({
   ingredients: ingredientsReducer,
